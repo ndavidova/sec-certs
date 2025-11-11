@@ -634,6 +634,7 @@ class FIPSCertificate(
             cert.state.policy_extract_ok = False
         return cert
 
+## TODO: This method for inspo
     @staticmethod
     def extract_policy_pdf_keywords(cert: FIPSCertificate) -> FIPSCertificate:
         """
