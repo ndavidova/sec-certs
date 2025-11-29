@@ -141,7 +141,6 @@ class FIPSDataset(Dataset[FIPSCertificate], ComplexSerializableType):
         compute_references(self.certs)
         compute_transitive_vulnerabilities(self.certs)
 
-## TODO insert pipeline steps here
     @serialize
     @only_backed()
     def extract_data(self) -> None:
@@ -154,8 +153,8 @@ class FIPSDataset(Dataset[FIPSCertificate], ComplexSerializableType):
         self._extract_policy_pdf_metadata()
         self._extract_policy_pdf_keywords()
         self._extract_algorithms_from_policy_tables()
+        self._extract_br1_metadata()
 
-## TODO insert here
     def _extract_policy_pdf_keywords(self) -> None:
         logger.info("Extracting keywords from policy pdfs.")
         certs_to_process = [x for x in self if x.state.policy_is_ok_to_analyze()]
@@ -166,6 +165,16 @@ class FIPSDataset(Dataset[FIPSCertificate], ComplexSerializableType):
             progress_bar_desc="Extracting keywords from policy pdfs",
         )
         self.update_with_certs(processed_certs)
+
+    def _extract_br1_metadata(self) -> None:
+        logger.info("Extracting BR1 metadata.")
+        certs_to_process = [x for x in self if x.state.policy_is_ok_to_analyze()]
+        cert_processing.process_parallel(
+            FIPSCertificate.extract_br1_metadata,
+            certs_to_process,
+            use_threading=False,
+            progress_bar_desc="Extracting BR1 chapters and tables from certificates",
+        )
 
     def _download_all_artifacts_body(self, fresh: bool = True) -> None:
         self._download_modules(fresh)
