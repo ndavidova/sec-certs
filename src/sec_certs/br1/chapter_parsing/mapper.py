@@ -1,16 +1,14 @@
-import copy
-import logging
+from pathlib import Path
 import re
 from typing import List
 
 import regex
 
-import config.constants as config
-from models.chapter import Chapter
+import sec_certs.br1.config.constants as config
+from sec_certs.br1.models.chapter import Chapter
 
-from .chapter_utils import traverse_chapters
+from .chapter_utils import chapters_from_json, traverse_chapters
 
-logger = logging.getLogger(__name__)
 
 
 def substitute(title: str) -> str:
@@ -33,9 +31,7 @@ def build_chapter_regex(
 
 
 # Core extraction logic
-def extract_chapters_from_text(
-    text: str, base_chapters: List[Chapter]
-) -> List[Chapter]:
+def extract_chapters_from_text(text: str) -> List[Chapter]:
     """
     Extract text between chapter boundaries from the given text. Returns a list
     of chapters and fills the .found attribute and .content attribute to appropriate
@@ -43,7 +39,7 @@ def extract_chapters_from_text(
     insensitive, allows a number of errors in the heading text, which can be configured via
     config.MAX_DEVIATION.
     """
-    chapters = copy.deepcopy(base_chapters)
+    chapters = chapters_from_json(Path(config.BASE_CHAPTERS))
     curr_chapter, curr_subchapter = 0, 0
     inside_chapter = False
 

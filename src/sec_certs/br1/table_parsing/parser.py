@@ -4,11 +4,11 @@ from typing import List
 
 from fuzzysearch import find_near_matches
 
-import config.constants as config
-from models.chapter import Chapter
+import sec_certs.br1.config.constants as config
+from sec_certs.br1.models.chapter import Chapter
 
 from .md_tables import filter_table_lines, parse_markdown_tables
-from .model.advanced_properties import AdvancedProperties
+from sec_certs.br1.table_parsing.model.br1_tables import BR1TablesClass
 
 
 def get_chapter(chapters: List[Chapter], chapter_num: int, subchapter_num: int):
@@ -75,7 +75,7 @@ def match_sections_between_headers(text: str, headers: List[str]) -> List[str]:
 
 # Section is split into parts by the separator titles
 def get_splitted_section(
-    text: str, section: int, subsection: int, name: str, adv_prop: AdvancedProperties
+    text: str, section: int, subsection: int, name: str, adv_prop: BR1TablesClass
 ) -> str:
     """
     Extracts the content associated with header name (`name`) from a section.
@@ -93,11 +93,11 @@ def get_splitted_section(
     return "" if name not in matched else sections[name]
 
 
-def parse_tables(chapters: List[Chapter]) -> AdvancedProperties:
+def parse_tables(chapters: List[Chapter]) -> BR1TablesClass:
     """
     Parse all tables defined in the AdvancedProperties model from the chapters' content.
     """
-    res = AdvancedProperties()
+    res = BR1TablesClass()
     table = None
     chapter = ""
 

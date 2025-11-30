@@ -3,8 +3,8 @@ import logging
 from dataclasses import asdict
 from pathlib import Path
 from typing import Iterator, List, Tuple
-from config.constants import INDENT
-from models.chapter import Chapter
+from sec_certs.br1.config.constants import INDENT
+from sec_certs.br1.models.chapter import Chapter
 
 logger = logging.getLogger(__name__)
 

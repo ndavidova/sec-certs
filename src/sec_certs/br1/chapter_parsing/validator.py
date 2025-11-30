@@ -1,7 +1,7 @@
 import logging
 from typing import List, Tuple
 
-from models.chapter import Chapter
+from sec_certs.br1.models.chapter import Chapter
 
 logger = logging.getLogger(__name__)
 
@@ -19,14 +19,14 @@ def validate_chapters(chapters: List[Chapter]) -> Tuple[int, int]:
 
     for i, chapter in enumerate(chapters, 1):
         if not chapter.found:
-            logger.warning(f"Chapter not found {i}!!!")
+            logger.debug(f"Chapter not found {i}!")
             error += 1
         for j, sub in enumerate(chapter.subchapters, 1):
             if not sub.content or not sub.found:
                 count += 1
                 msg = f"Subchapter number {str(i)}.{str(j)} has no content / not found."
-                logger.warning(msg if not sub.optional else f"Optional {msg}")
+                logger.debug(msg if not sub.optional else f"Optional {msg}")
                 if not sub.optional:
                     error += 1
-    logger.info(f"Total empty subchapters: {count}")
+    logger.debug(f"Total empty subchapters: {count}")
     return error, count
