@@ -31,6 +31,7 @@ from sec_certs.utils import helpers
 from sec_certs.utils import parallel_processing as cert_processing
 from sec_certs.utils.helpers import fips_dgst
 from sec_certs.utils.profiling import staged
+from sec_certs.br1.table_parsing.utils import export_br1_tables_to_json
 
 logger = logging.getLogger(__name__)
 
@@ -168,13 +169,15 @@ class FIPSDataset(Dataset[FIPSCertificate], ComplexSerializableType):
 
     def _extract_br1_metadata(self) -> None:
         logger.info("Extracting BR1 metadata.")
+
         certs_to_process = [x for x in self if x.state.policy_is_ok_to_analyze()]
-        cert_processing.process_parallel(
+        processed_certs = cert_processing.process_parallel(
             FIPSCertificate.extract_br1_metadata,
             certs_to_process,
             use_threading=False,
             progress_bar_desc="Extracting BR1 chapters and tables from certificates",
         )
+        self.update_with_certs(processed_certs)
 
     def _download_all_artifacts_body(self, fresh: bool = True) -> None:
         self._download_modules(fresh)
